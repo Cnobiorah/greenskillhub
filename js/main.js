@@ -1086,7 +1086,13 @@ document.addEventListener("DOMContentLoaded", () => {
         ${
           isComingSoon
             ? `<span class="card-link">Coming soon</span>`
-            : `<a href="${item.link}" target="_blank" class="card-link">Open PDF →</a>`
+            : `<a href="${item.link}" target="_blank" class="card-link"
+   onclick="gtag('event', 'download', {
+     'event_category': 'publication',
+     'event_label': '${item.id}'
+   });">
+   Open PDF →
+</a>`
         }
       </article>
     `;
@@ -1256,7 +1262,11 @@ document.addEventListener("DOMContentLoaded", () => {
           <li>Format: ${item.format}</li>
           <li>Use: ${item.use}</li>
         </ul>
-        <a href="${item.link}" target="_blank" class="btn btn-sm btn-secondary">Download</a>
+     <a href="${item.link}" target="_blank"
+   class="btn btn-sm btn-secondary"
+   onclick="gtag('event','download',{'event_category':'resource','event_label':'${item.id}'})">
+   Download
+</a>
       </article>
     `;
   }
