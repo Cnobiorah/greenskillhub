@@ -123,7 +123,14 @@
             <li>Access: Free</li>
           </ul>
           <!-- TODO: update href to your actual PDF -->
-          <a href="files/green-skills-starter-guide.pdf" class="btn btn-sm btn-secondary">Download PDF</a>
+          <a href="files/green-skills-starter-guide.pdf"
+   class="btn btn-sm btn-secondary"
+   onclick="gtag('event', 'download', {
+     'event_category': 'resource',
+     'event_label': 'starter_guide'
+   }); setTimeout(() => { window.location = this.href; }, 200); return false;">
+   Download PDF
+</a>
         </article>
 
         <!-- Sustainability Career Roadmap Template -->
@@ -145,7 +152,14 @@
             <li>Access: Free</li>
           </ul>
           <!-- TODO: update href to your actual Word/PDF -->
-          <a href="files/sustainability-career-roadmap-template.docx" class="btn btn-sm btn-secondary">Download template</a>
+         <a href="files/sustainability-career-roadmap-template.docx"
+   class="btn btn-sm btn-secondary"
+   onclick="gtag('event', 'download', {
+     'event_category': 'resource',
+     'event_label': 'career_template'
+   }); setTimeout(() => { window.location = this.href; }, 200); return false;">
+   Download template
+</a>
         </article>
 
         <!-- Green Skills Course Tracker -->
@@ -167,7 +181,14 @@
             <li>Access: Free</li>
           </ul>
           <!-- TODO: update href to your actual Excel/PDF -->
-          <a href="files/green-skills-course-tracker.xlsx" class="btn btn-sm btn-secondary">Download tracker</a>
+          <a href="files/green-skills-course-tracker.xlsx"
+   class="btn btn-sm btn-secondary"
+   onclick="gtag('event', 'download', {
+     'event_category': 'resource',
+     'event_label': 'course_tracker'
+   }); setTimeout(() => { window.location = this.href; }, 200); return false;">
+   Download tracker
+</a>
         </article>
 
         <!-- Example future resource -->
