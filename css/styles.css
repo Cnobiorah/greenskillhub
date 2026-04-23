@@ -1315,3 +1315,55 @@ a:focus-visible {
   border-color: #1faa59;
   box-shadow: 0 0 0 3px rgba(31, 170, 89, 0.12);
 }
+.stats-section {
+  padding: 60px 20px;
+  background: #f9fafb;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: default;
+}
+
+.stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
+
+.stat-card h2 {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: bold;
+  color: #0a7f3f;
+}
+
+.stat-note {
+  font-size: 13px;
+  color: #888;
+}
+.stat-link {
+  text-decoration: none;
+  color: inherit;
+  font-weight: bold;
+}
+
+.stat-link:hover {
+  text-decoration: underline;
+}
