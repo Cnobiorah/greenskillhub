@@ -1478,28 +1478,8 @@ document.addEventListener("DOMContentLoaded", () => {
   loadTopResource();
   trackVisit();
 });
-// REALTIME: stats (visitors & downloads)
-supabaseClient
-  .channel('stats-changes')
-  .on(
-    'postgres_changes',
-    { event: 'UPDATE', schema: 'public', table: 'stats' },
-    payload => {
-      loadStats();
-    }
-  )
-  .subscribe();
-
-
-// REALTIME: resource stats
-supabaseClient
-  .channel('resource-changes')
-  .on(
-    'postgres_changes',
-    { event: '*', schema: 'public', table: 'resource_stats' },
-    payload => {
-      loadDownloadCount();
-      loadTopResource();
-    }
-  )
-  .subscribe();
+// 🔁 AUTO REFRESH (Polling instead of realtime)
+setInterval(() => {
+  loadStats();
+  loadTopResource();
+}, 5000); // every 5 seconds
