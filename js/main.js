@@ -1405,7 +1405,7 @@ async function incrementResource(resourceId) {
       resource_id: resourceId
     });
   } catch (error) {
-    console.error("Error updating resource:", error);
+    console.error('Download tracking error:', error);
   }
 }
 
@@ -1437,25 +1437,22 @@ async function loadStats() {
 
 // 4. Load top resource (UPDATED ONLY HERE)
 async function loadTopResource() {
-  try {
-    const { data } = await supabaseClient
-      .from('resource_stats')
-      .select('*')
-      .order('downloads', { ascending: false })
-      .limit(1);
+  const { data, error } = await supabaseClient
+    .from('resource_stats')
+    .select('*')
+    .order('downloads', { ascending: false })
+    .limit(1);
 
-    if (data && data.length > 0) {
-      const el = document.getElementById("topResource");
+  if (error) {
+    console.error("Top resource error:", error);
+    return;
+  }
 
-      if (el) {
-        el.textContent = data[0].id
-          .replace(/-/g, " ")
-          .replace(/\b\w/g, l => l.toUpperCase());
-      }
-    }
-
-  } catch (error) {
-    console.error("Error loading top resource:", error);
+  if (data && data.length > 0) {
+    const resource = data[0].id.replace('_', ' ');
+    document.getElementById("topResource").textContent = resource;
+  } else {
+    document.getElementById("topResource").textContent = "No data";
   }
 }
 
