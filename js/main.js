@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   // ================= MOBILE NAV TOGGLING =================
   const navToggle = document.getElementById("navToggle");
   const mainNav = document.getElementById("mainNav");
@@ -1395,14 +1395,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_KEY,
-  {
-    realtime: {
-      params: {
-        eventsPerSecond: 10
-      }
-    }
-  }
+  SUPABASE_KEY
 );
 
 // 2. Increment resource downloads
@@ -1466,17 +1459,25 @@ async function loadTopResource() {
 // 5. Track visitor
 async function trackVisit() {
   try {
-    await supabaseClient.rpc('increment_visitors');
+    const { error } = await supabaseClient.rpc('increment_visitors');
+
+    if (error) {
+      console.error("Visitor tracking error:", error);
+      return false;
+    }
+
+    return true;
   } catch (error) {
     console.error("Visitor tracking error:", error);
+    return false;
   }
 }
 
 // 6. Run when page loads
-document.addEventListener("DOMContentLoaded", () => {
-  loadStats();
+document.addEventListener("DOMContentLoaded", async () => {
+  await trackVisit();
+  await loadStats();
   loadTopResource();
-  trackVisit();
 });
 // 🔁 AUTO REFRESH (Polling instead of realtime)
 setInterval(() => {
