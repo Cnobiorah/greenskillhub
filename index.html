@@ -94,20 +94,20 @@
 
     <div class="stat-card">
       <h2>👥 Monthly Visitors</h2>
-      <p class="stat-number">25+</p>
+      <p class="stat-number" id="visitorCount">0+</p>
       <span class="stat-note">Growing global audience</span>
     </div>
 
     <div class="stat-card">
       <h2>📥 Resource Downloads</h2>
-      <p class="stat-number">18+</p>
+      <p class="stat-number" id="downloadCount">0+</p>
       <span class="stat-note">Across guides & templates</span>
     </div>
 
     <div class="stat-card">
       <h2>📄 Top Resource</h2>
-      <p class="stat-number">
-  <a href="resources.html" class="stat-link">Starter Guide</a>
+    <p class="stat-number">
+  <a href="resources.html" class="stat-link" id="topResource">Loading...</a>
 </p>
       <span class="stat-note">Most downloaded</span>
     </div>
@@ -277,7 +277,7 @@
         </ul>
         <a href="files/green-skills-starter-guide.pdf"
    class="btn btn-sm btn-secondary"
-   onclick="gtag('event','download',{
+   onclick="incrementResource('starter_guide'); gtag('event','download',{
      'event_category':'resource',
      'event_label':'starter_guide'
    })">
@@ -298,7 +298,7 @@
         </ul>
         <a href="files/sustainability-career-roadmap-template.pdf"
    class="btn btn-sm btn-secondary"
-   onclick="gtag('event','download',{
+   onclick="incrementResource('career_template'); gtag('event','download',{
      'event_category':'resource',
      'event_label':'career_roadmap'
    })">
@@ -319,7 +319,7 @@
         </ul>
         <a href="files/green-skills-course-tracker.xlsx"
    class="btn btn-sm btn-secondary"
-   onclick="gtag('event','download',{
+   onclick="incrementResource('course_tracker'); gtag('event','download',{
      'event_category':'resource',
      'event_label':'course_tracker'
    })">
@@ -438,57 +438,59 @@ Join the newsletter
       </div>
     </div>
   </footer>
-
-  <script src="js/main.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const skillsOfMonth = [
-        {
-          kicker: "Green Skill of the Month • Built Environment • High demand",
-          title: "Building Energy Modelling",
-          description: "Simulate building energy performance to support energy efficiency and net-zero building design.",
-          tools: "Tools: IES VE, DesignBuilder, EnergyPlus",
-          level: "Level: Advanced"
-        },
-        {
-          kicker: "Green Skill of the Month • Carbon • High demand",
-          title: "Life Cycle Assessment (LCA)",
-          description: "Assess environmental impacts of materials and buildings across their life cycle.",
-          tools: "Tools: One Click LCA, OpenLCA",
-          level: "Level: Advanced"
-        },
-        {
-          kicker: "Green Skill of the Month • ESG • High demand",
-          title: "Sustainability Reporting",
-          description: "Translate sustainability data into ESG disclosures and reports.",
-          tools: "Focus: GRI, ISSB, CSRD",
-          level: "Level: Advanced"
-        },
-        {
-          kicker: "Green Skill of the Month • Built Environment",
-          title: "Passive Design Strategy",
-          description: "Use climate-responsive design strategies like shading and ventilation to reduce energy demand.",
-          tools: "Tools: Climate Consultant, Ladybug",
-          level: "Level: Intermediate"
-        },
-        {
-          kicker: "Green Skill of the Month • Energy",
-          title: "Solar PV Integration",
-          description: "Design and integrate solar photovoltaic systems in buildings and energy systems.",
-          tools: "Tools: PVsyst, PVSol",
-          level: "Level: Intermediate"
-        }
-      ];
+  document.addEventListener("DOMContentLoaded", function () {
+    const skillsOfMonth = [
+      {
+        kicker: "Green Skill of the Month • Built Environment • High demand",
+        title: "Building Energy Modelling",
+        description: "Simulate building energy performance to support energy efficiency and net-zero building design.",
+        tools: "Tools: IES VE, DesignBuilder, EnergyPlus",
+        level: "Level: Advanced"
+      },
+      {
+        kicker: "Green Skill of the Month • Carbon • High demand",
+        title: "Life Cycle Assessment (LCA)",
+        description: "Assess environmental impacts of materials and buildings across their life cycle.",
+        tools: "Tools: One Click LCA, OpenLCA",
+        level: "Level: Advanced"
+      },
+      {
+        kicker: "Green Skill of the Month • ESG • High demand",
+        title: "Sustainability Reporting",
+        description: "Translate sustainability data into ESG disclosures and reports.",
+        tools: "Focus: GRI, ISSB, CSRD",
+        level: "Level: Advanced"
+      },
+      {
+        kicker: "Green Skill of the Month • Built Environment",
+        title: "Passive Design Strategy",
+        description: "Use climate-responsive design strategies like shading and ventilation to reduce energy demand.",
+        tools: "Tools: Climate Consultant, Ladybug",
+        level: "Level: Intermediate"
+      },
+      {
+        kicker: "Green Skill of the Month • Energy",
+        title: "Solar PV Integration",
+        description: "Design and integrate solar photovoltaic systems in buildings and energy systems.",
+        tools: "Tools: PVsyst, PVSol",
+        level: "Level: Intermediate"
+      }
+    ];
 
-      const month = new Date().getMonth();
-      const skill = skillsOfMonth[month % skillsOfMonth.length];
+    const month = new Date().getMonth();
+    const skill = skillsOfMonth[month % skillsOfMonth.length];
 
-      document.getElementById("skillMonthKicker").textContent = skill.kicker;
-      document.getElementById("skillMonthTitle").textContent = skill.title;
-      document.getElementById("skillMonthDescription").textContent = skill.description;
-      document.getElementById("skillMonthTools").textContent = skill.tools;
-      document.getElementById("skillMonthLevel").textContent = skill.level;
-    });
-  </script>
+    document.getElementById("skillMonthKicker").textContent = skill.kicker;
+    document.getElementById("skillMonthTitle").textContent = skill.title;
+    document.getElementById("skillMonthDescription").textContent = skill.description;
+    document.getElementById("skillMonthTools").textContent = skill.tools;
+    document.getElementById("skillMonthLevel").textContent = skill.level;
+  });
+</script>
+
+<!-- ✅ Correct order -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>

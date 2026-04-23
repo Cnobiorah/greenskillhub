@@ -125,7 +125,7 @@
           <!-- TODO: update href to your actual PDF -->
           <a href="files/green-skills-starter-guide.pdf"
    class="btn btn-sm btn-secondary"
-   onclick="gtag('event', 'download', {
+   onclick="incrementResource('starter_guide'); gtag('event', 'download', {
      'event_category': 'resource',
      'event_label': 'starter_guide'
    }); setTimeout(() => { window.location = this.href; }, 200); return false;">
@@ -154,7 +154,7 @@
           <!-- TODO: update href to your actual Word/PDF -->
          <a href="files/sustainability-career-roadmap-template.docx"
    class="btn btn-sm btn-secondary"
-   onclick="gtag('event', 'download', {
+   onclick="incrementResource('career_template'); gtag('event', 'download', {
      'event_category': 'resource',
      'event_label': 'career_template'
    }); setTimeout(() => { window.location = this.href; }, 200); return false;">
@@ -183,7 +183,7 @@
           <!-- TODO: update href to your actual Excel/PDF -->
           <a href="files/green-skills-course-tracker.xlsx"
    class="btn btn-sm btn-secondary"
-   onclick="gtag('event', 'download', {
+   onclick="incrementResource('course_tracker'); gtag('event', 'download', {
      'event_category': 'resource',
      'event_label': 'course_tracker'
    }); setTimeout(() => { window.location = this.href; }, 200); return false;">
@@ -258,9 +258,6 @@
     </div>
   </div>
 </footer>
-
-  <script src="js/main.js"></script>
-
   <!-- Inline script for search, filters, and pagination (ONLY on this page) -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -370,5 +367,7 @@
       render();
     });
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>

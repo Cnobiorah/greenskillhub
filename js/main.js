@@ -1262,9 +1262,9 @@ document.addEventListener("DOMContentLoaded", () => {
           <li>Format: ${item.format}</li>
           <li>Use: ${item.use}</li>
         </ul>
-     <a href="${item.link}" target="_blank"
+    <a href="${item.link}" target="_blank"
    class="btn btn-sm btn-secondary"
-   onclick="gtag('event','download',{'event_category':'resource','event_label':'${item.id}'})">
+   onclick="incrementResource('${item.id}')">
    Download
 </a>
       </article>
@@ -1386,4 +1386,91 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("gsh-theme", "light");
     }
   });
+});
+// ================= SUPABASE SETUP =================
+
+// 1. Create client
+const SUPABASE_URL = "https://lppxrnbwctcknxkehfkd.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxwcHhybmJ3Y3Rja254a2VoZmtkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5MzA4NzYsImV4cCI6MjA5MjUwNjg3Nn0.ShucehZIMg_rsDDaHy4kDXIFDuavnNU508xBfkzuKxQ";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+// 2. Increment resource downloads
+async function incrementResource(resourceId) {
+  try {
+    await supabaseClient.rpc('increment_resource_download', {
+      resource_id: resourceId
+    });
+  } catch (error) {
+    console.error("Error updating resource:", error);
+  }
+}
+
+// 3. Load homepage stats
+async function loadStats() {
+  try {
+    const { data } = await supabaseClient
+      .from('stats')
+      .select('*');
+
+    if (!data) return;
+
+    data.forEach(item => {
+      if (item.id === 'visitors') {
+        const el = document.getElementById("visitorCount");
+        if (el) el.textContent = item.count + "+";
+      }
+
+      if (item.id === 'downloads') {
+        const el = document.getElementById("downloadCount");
+        if (el) el.textContent = item.count + "+";
+      }
+    });
+
+  } catch (error) {
+    console.error("Error loading stats:", error);
+  }
+}
+
+// 4. Load top resource (UPDATED ONLY HERE)
+async function loadTopResource() {
+  try {
+    const { data } = await supabaseClient
+      .from('resource_stats')
+      .select('*')
+      .order('downloads', { ascending: false })
+      .limit(1);
+
+    if (data && data.length > 0) {
+      const el = document.getElementById("topResource");
+
+      if (el) {
+        el.textContent = data[0].id
+          .replace(/-/g, " ")
+          .replace(/\b\w/g, l => l.toUpperCase());
+      }
+    }
+
+  } catch (error) {
+    console.error("Error loading top resource:", error);
+  }
+}
+
+// 5. Track visitor
+async function trackVisit() {
+  try {
+    await supabaseClient.rpc('increment_visitors');
+  } catch (error) {
+    console.error("Visitor tracking error:", error);
+  }
+}
+
+// 6. Run when page loads
+document.addEventListener("DOMContentLoaded", () => {
+  loadStats();
+  loadTopResource();
+  trackVisit();
 });
