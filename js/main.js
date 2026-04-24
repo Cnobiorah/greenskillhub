@@ -14,6 +14,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (yearSpan) {
     yearSpan.textContent = new Date().getFullYear();
   }
+  await trackVisit();
+  await loadStats();
+  loadTopResource();
 
   // =======================================================
   // ================ GREEN SKILL UPDATES ==================
@@ -1072,31 +1075,30 @@ document.addEventListener("DOMContentLoaded", async () => {
   const articlesPagination = document.getElementById("articlesPagination");
 
   function renderArticleCard(item) {
-    const isComingSoon = !item.link || item.link === "#";
+  const isComingSoon = !item.link || item.link === "#";
 
-    return `
-      <article class="card article-card">
-        <div class="card-tag">${item.type}</div>
-        <h3>${item.title}</h3>
-        <p>${item.description}</p>
-        <div class="card-meta">
-          <span>${item.period}</span>
-          <span>${isComingSoon ? "Report" : "PDF"}</span>
-        </div>
-        ${
-          isComingSoon
-            ? `<span class="card-link">Coming soon</span>`
-            : `<a href="${item.link}" target="_blank" class="card-link"
-   onclick="gtag('event', 'download', {
-     'event_category': 'publication',
-     'event_label': '${item.id}'
-   });">
-   Open PDF →
-</a>`
-        }
-      </article>
-    `;
-  }
+  return `
+    <article class="card article-card">
+      <div class="card-tag">${item.type}</div>
+      <h3>${item.title}</h3>
+      <p>${item.description}</p>
+
+      <div class="card-meta">
+        <span>${item.period}</span>
+        <span>${isComingSoon ? "Report" : "PDF"}</span>
+      </div>
+
+     ${
+  isComingSoon
+    ? `<span class="card-link">Coming soon</span>`
+    : `<a href="#" class="card-link"
+         onclick="incrementResource('${item.id}'); setTimeout(function(){ window.open('${item.link}', '_blank'); }, 200); return false;">
+         Open PDF →
+       </a>`
+      }
+    </article>
+  `;
+}
 
   // Homepage featured
   if (featuredArticlesGrid) {
@@ -1411,28 +1413,45 @@ async function incrementResource(resourceId) {
 
 // 3. Load homepage stats
 async function loadStats() {
-  try {
-    const { data } = await supabaseClient
-      .from('stats')
-      .select('*');
+    try {
+        // ✅ VISITORS (monthly unique visits)
+        const { data: visits, error } = await supabaseClient
+            .from('visits')
+            .select('created_at');
 
-    if (!data) return;
+        if (error || !visits) return;
 
-    data.forEach(item => {
-      if (item.id === 'visitors') {
-        const el = document.getElementById("visitorCount");
-        if (el) el.textContent = item.count + "+";
-      }
+        const now = new Date();
+        const month = now.getMonth();
+        const year = now.getFullYear();
 
-      if (item.id === 'downloads') {
-        const el = document.getElementById("downloadCount");
-        if (el) el.textContent = item.count + "+";
-      }
-    });
+        const visitorCount = visits.filter(v => {
+            const d = new Date(v.created_at);
+            return d.getMonth() === month && d.getFullYear() === year;
+        }).length;
 
-  } catch (error) {
-    console.error("Error loading stats:", error);
-  }
+        const visitorEl = document.getElementById("visitorCount");
+        if (visitorEl) visitorEl.textContent = visitorCount + "+";
+
+
+        // ✅ DOWNLOADS (sum of all resources)
+        const { data: resources, error: resourceError } = await supabaseClient
+            .from('resource_stats')
+            .select('downloads');
+
+        if (!resourceError && resources) {
+            const totalDownloads = resources.reduce(
+                (sum, r) => sum + (r.downloads || 0),
+                0
+            );
+
+            const downloadEl = document.getElementById("downloadCount");
+            if (downloadEl) downloadEl.textContent = totalDownloads + "+";
+        }
+
+    } catch (error) {
+        console.error("Error loading stats:", error);
+    }
 }
 
 // 4. Load top resource (UPDATED ONLY HERE)
@@ -1449,7 +1468,7 @@ async function loadTopResource() {
   }
 
   if (data && data.length > 0) {
-    const resource = data[0].id.replace('_', ' ');
+    const resource = data[0].id.replace(/_/g, ' ');
     document.getElementById("topResource").textContent = resource;
   } else {
     document.getElementById("topResource").textContent = "No data";
@@ -1458,27 +1477,25 @@ async function loadTopResource() {
 
 // 5. Track visitor
 async function trackVisit() {
-  try {
-    const { error } = await supabaseClient.rpc('increment_visitors');
+  const today = new Date().toDateString();
+  const lastVisit = localStorage.getItem("lastVisit");
 
-    if (error) {
-      console.error("Visitor tracking error:", error);
-      return false;
+  if (lastVisit === today) return; // 🚫 stop refresh spam
+
+  try {
+    const { error } = await supabaseClient.rpc('track_visit'); // new function
+
+    if (!error) {
+      localStorage.setItem("lastVisit", today);
     }
 
-    return true;
   } catch (error) {
     console.error("Visitor tracking error:", error);
-    return false;
   }
 }
 
 // 6. Run when page loads
-document.addEventListener("DOMContentLoaded", async () => {
-  await trackVisit();
-  await loadStats();
-  loadTopResource();
-});
+
 // 🔁 AUTO REFRESH (Polling instead of realtime)
 setInterval(() => {
   loadStats();
