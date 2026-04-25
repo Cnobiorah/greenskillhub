@@ -1,12 +1,12 @@
 const SUPABASE_URL = "https://snokfmygrgittxvwnumv.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNub2tmbXlncmdpdHR4dndudW12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMjUwMTIsImV4cCI6MjA5MjYwMTAxMn0.iCE3WVio6qGD1G6PT6hPOFFcAS0D5J3kQPB7feky92Q";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 
 // GENERIC FETCH
 async function fetchTable(table, options = {}) {
-  let query = supabase.from(table).select("*");
+  let query = supabaseClient.from(table).select("*");
 
   if (options.orderBy) {
     query = query.order(options.orderBy.column, {
@@ -50,18 +50,18 @@ async function getFeaturedArticles(limit = 3) {
 }
 
 async function getStats() {
-  const { data } = await supabase.from("stats").select("*").single();
+  const { data } = await supabaseClient.from("stats").select("*").single();
   return data;
 }
 
 async function incrementResource(resourceKey) {
-  await supabase.rpc("increment_download", {
+  await supabaseClient.rpc("increment_download", {
     resource_key: resourceKey
   });
 }
-// 👉 ADD THIS HERE
+
 async function incrementVisitors() {
-  await supabase.rpc("increment_visitors");
+  await supabaseClient.rpc("increment_visitors");
 }
 
 
