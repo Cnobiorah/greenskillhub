@@ -123,12 +123,15 @@
             <li>Access: Free</li>
           </ul>
           <!-- TODO: update href to your actual PDF -->
-          <a href="files/green-skills-starter-guide.pdf"
+         <a href="files/green-skills-starter-guide.pdf"
    class="btn btn-sm btn-secondary"
-   onclick="incrementResource('starter_guide'); gtag('event', 'download', {
+   onclick="incrementResource('green-skills-starter-guide'); 
+   gtag('event', 'download', {
      'event_category': 'resource',
-     'event_label': 'starter_guide'
-   }); setTimeout(() => { window.location = this.href; }, 200); return false;">
+     'event_label': 'green-skills-starter-guide'
+   }); 
+   setTimeout(() => { window.location = this.href; }, 200); 
+   return false;">
    Download PDF
 </a>
         </article>
@@ -152,12 +155,15 @@
             <li>Access: Free</li>
           </ul>
           <!-- TODO: update href to your actual Word/PDF -->
-         <a href="files/sustainability-career-roadmap-template.docx"
+        <a href="files/sustainability-career-roadmap-template.docx"
    class="btn btn-sm btn-secondary"
-   onclick="incrementResource('career_template'); gtag('event', 'download', {
+   onclick="incrementResource('sustainability-career-roadmap'); 
+   gtag('event', 'download', {
      'event_category': 'resource',
-     'event_label': 'career_template'
-   }); setTimeout(() => { window.location = this.href; }, 200); return false;">
+     'event_label': 'sustainability-career-roadmap'
+   }); 
+   setTimeout(() => { window.location = this.href; }, 200); 
+   return false;">
    Download template
 </a>
         </article>
@@ -183,10 +189,13 @@
           <!-- TODO: update href to your actual Excel/PDF -->
           <a href="files/green-skills-course-tracker.xlsx"
    class="btn btn-sm btn-secondary"
-   onclick="incrementResource('course_tracker'); gtag('event', 'download', {
+   onclick="incrementResource('green-skills-course-tracker'); 
+   gtag('event', 'download', {
      'event_category': 'resource',
-     'event_label': 'course_tracker'
-   }); setTimeout(() => { window.location = this.href; }, 200); return false;">
+     'event_label': 'green-skills-course-tracker'
+   }); 
+   setTimeout(() => { window.location = this.href; }, 200); 
+   return false;">
    Download tracker
 </a>
         </article>
@@ -367,7 +376,10 @@
       render();
     });
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script src="js/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script src="js/supabase.js"></script>
+<script src="js/global.js"></script>
+<script src="js/resources.js"></script>
 </body>
 </html>

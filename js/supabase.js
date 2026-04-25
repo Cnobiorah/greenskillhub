@@ -1,0 +1,74 @@
+const SUPABASE_URL = "YOUR_URL";
+const SUPABASE_KEY = "YOUR_KEY";
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
+// GENERIC FETCH
+async function fetchTable(table, options = {}) {
+  let query = supabase.from(table).select("*");
+
+  if (options.orderBy) {
+    query = query.order(options.orderBy.column, {
+      ascending: options.orderBy.ascending ?? false
+    });
+  }
+
+  if (options.limit) {
+    query = query.limit(options.limit);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error(error);
+    return [];
+  }
+
+  return data;
+}
+
+
+// FUNCTIONS
+async function getArticles() {
+  return fetchTable("articles", {
+    orderBy: { column: "created_at", ascending: false }
+  });
+}
+
+async function getUpdates() {
+  return fetchTable("updates", {
+    orderBy: { column: "created_at", ascending: false }
+  });
+}
+
+async function getFeaturedArticles(limit = 3) {
+  return fetchTable("articles", {
+    orderBy: { column: "created_at", ascending: false },
+    limit
+  });
+}
+
+async function getStats() {
+  const { data } = await supabase.from("stats").select("*").single();
+  return data;
+}
+
+async function incrementResource(resourceKey) {
+  await supabase.rpc("increment_download", {
+    resource_key: resourceKey
+  });
+}
+// 👉 ADD THIS HERE
+async function incrementVisitors() {
+  await supabase.rpc("increment_visitors");
+}
+
+
+// MAKE FUNCTIONS GLOBAL
+window.getUpdates = getUpdates;
+window.getArticles = getArticles;
+window.getFeaturedArticles = getFeaturedArticles;
+window.getStats = getStats;
+window.incrementResource = incrementResource;
+window.incrementVisitors = incrementVisitors;
