@@ -1,27 +1,24 @@
+// ===============================
+// SUPABASE.JS (CLEAN)
+// ===============================
+
 const SUPABASE_URL = "https://snokfmygrgittxvwnumv.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNub2tmbXlncmdpdHR4dndudW12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMjUwMTIsImV4cCI6MjA5MjYwMTAxMn0.iCE3WVio6qGD1G6PT6hPOFFcAS0D5J3kQPB7feky92Q";
+const SUPABASE_KEY = "YOUR_ANON_KEY";
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 
-// GENERIC FETCH
-async function fetchTable(table, options = {}) {
-  let query = supabaseClient.from(table).select("*");
-
-  if (options.orderBy) {
-    query = query.order(options.orderBy.column, {
-      ascending: options.orderBy.ascending ?? false
-    });
-  }
-
-  if (options.limit) {
-    query = query.limit(options.limit);
-  }
-
-  const { data, error } = await query;
+// -------------------------------
+// ARTICLES
+// -------------------------------
+async function getArticles() {
+  const { data, error } = await supabaseClient
+    .from("articles")
+    .select("*")
+    .order("created_at", { ascending: false });
 
   if (error) {
-    console.error(error);
+    console.error("Articles error:", error);
     return [];
   }
 
@@ -29,29 +26,64 @@ async function fetchTable(table, options = {}) {
 }
 
 
-// FUNCTIONS
-async function getArticles() {
-  return fetchTable("articles", {
-    orderBy: { column: "created_at", ascending: false }
-  });
-}
-
-async function getUpdates() {
-  return fetchTable("updates");
-}
-
+// -------------------------------
+// FEATURED ARTICLES
+// -------------------------------
 async function getFeaturedArticles(limit = 3) {
-  return fetchTable("articles", {
-    orderBy: { column: "created_at", ascending: false },
-    limit
-  });
-}
+  const { data, error } = await supabaseClient
+    .from("articles")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(limit);
 
-async function getStats() {
-  const { data } = await supabaseClient.from("stats").select("*").single();
+  if (error) {
+    console.error("Featured error:", error);
+    return [];
+  }
+
   return data;
 }
 
+
+// -------------------------------
+// UPDATES (FULL DATA — NO LIMIT)
+// -------------------------------
+async function getUpdates() {
+  const { data, error } = await supabaseClient
+    .from("updates")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Updates error:", error);
+    return [];
+  }
+
+  return data;
+}
+
+
+// -------------------------------
+// STATS
+// -------------------------------
+async function getStats() {
+  const { data, error } = await supabaseClient
+    .from("stats")
+    .select("*")
+    .single();
+
+  if (error) {
+    console.error("Stats error:", error);
+    return null;
+  }
+
+  return data;
+}
+
+
+// -------------------------------
+// ACTIONS
+// -------------------------------
 async function incrementResource(resourceKey) {
   await supabaseClient.rpc("increment_download", {
     resource_key: resourceKey
@@ -63,10 +95,12 @@ async function incrementVisitors() {
 }
 
 
-// MAKE FUNCTIONS GLOBAL
-window.getUpdates = getUpdates;
+// -------------------------------
+// GLOBAL EXPORTS
+// -------------------------------
 window.getArticles = getArticles;
 window.getFeaturedArticles = getFeaturedArticles;
+window.getUpdates = getUpdates;
 window.getStats = getStats;
 window.incrementResource = incrementResource;
 window.incrementVisitors = incrementVisitors;

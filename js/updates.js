@@ -1,5 +1,5 @@
 // ===============================
-// UPDATES.JS
+// UPDATES.JS (FINAL CLEAN)
 // ===============================
 
 let allUpdates = [];
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 // -------------------------------
-// RENDER FUNCTION
+// RENDER
 // -------------------------------
 function renderUpdates() {
   const grid = document.getElementById("updatesGrid");
@@ -30,40 +30,43 @@ function renderUpdates() {
 
   grid.innerHTML = "";
 
-  // Pagination logic
   const start = (currentPage - 1) * itemsPerPage;
-  const paginatedItems = filteredUpdates;tart, start + itemsPerPage;
+  const items = filteredUpdates.slice(start, start + itemsPerPage);
 
-  if (paginatedItems.length === 0) {
-    grid.innerHTML = `<p class="no-results">No updates found.</p>`;
+  if (!items.length) {
+    grid.innerHTML = `<p>No updates found.</p>`;
     pagination.innerHTML = "";
     return;
   }
 
-  paginatedItems.forEach(item => {
+  items.forEach(item => {
     const card = document.createElement("div");
     card.className = "card update-card";
 
     card.innerHTML = `
       <div class="update-header">
-        <span class="badge ${item.access?.toLowerCase().includes('free') ? 'badge-free' : 'badge-paid'}
-          ${item.access || 'info'}
+        <span class="badge ${
+          item.access?.toLowerCase().includes("free")
+            ? "badge-free"
+            : "badge-paid"
+        }">
+          ${item.access || "Info"}
         </span>
-        <span class="update-category">${item.sector || ''}</span>
+        <span class="update-category">${item.sector || "General"}</span>
       </div>
 
       <h3>${item.title}</h3>
 
-      <p class="update-provider">${item.provider || ''}</p>
+      <p class="update-provider">${item.provider || "Unknown Provider"}</p>
 
       <ul class="update-meta-list">
-        <li>Type: ${item.type || 'Course'}</li>
-<li>Level: ${item.level || 'All Levels'}</li>
-<li>Duration: ${item.duration || 'Flexible'}</li>
-<li>Format: ${item.format || 'Online'}</li>
+        <li><strong>Type:</strong> ${item.type || "-"}</li>
+        <li><strong>Level:</strong> ${item.level || "-"}</li>
+        <li><strong>Duration:</strong> ${item.duration || "-"}</li>
+        <li><strong>Format:</strong> ${item.format || "-"}</li>
       </ul>
 
-      <a href="${item.link}" target="_blank" class="card-link">
+      <a href="${item.link || "#"}" target="_blank" class="card-link">
         View details →
       </a>
     `;
@@ -83,58 +86,54 @@ function renderPagination() {
 
   const totalPages = Math.ceil(filteredUpdates.length / itemsPerPage);
 
+  if (totalPages <= 1) {
+    pagination.innerHTML = "";
+    return;
+  }
+
   pagination.innerHTML = `
-    <div class="pagination-inner">
-      <button class="btn-page" ${currentPage === 1 ? "disabled" : ""} id="prevBtn">Prev</button>
-      <span class="pagination-info">Page ${currentPage} of ${totalPages}</span>
-      <button class="btn-page" ${currentPage === totalPages ? "disabled" : ""} id="nextBtn">Next</button>
-    </div>
+    <button ${currentPage === 1 ? "disabled" : ""} id="prevBtn">Prev</button>
+    <span>Page ${currentPage} of ${totalPages}</span>
+    <button ${currentPage === totalPages ? "disabled" : ""} id="nextBtn">Next</button>
   `;
 
-  document.getElementById("prevBtn")?.addEventListener("click", () => {
+  document.getElementById("prevBtn").onclick = () => {
     currentPage--;
     renderUpdates();
-  });
+  };
 
-  document.getElementById("nextBtn")?.addEventListener("click", () => {
+  document.getElementById("nextBtn").onclick = () => {
     currentPage++;
     renderUpdates();
-  });
+  };
 }
 
 
 // -------------------------------
-// FILTERS + SEARCH
+// FILTERS
 // -------------------------------
 function setupFilters() {
-  const searchInput = document.getElementById("updatesSearch");
-  const sectorFilter = document.getElementById("updatesSectorFilter");
-  const typeFilter = document.getElementById("updatesTypeFilter");
+  const search = document.getElementById("updatesSearch");
+  const sector = document.getElementById("updatesSectorFilter");
+  const type = document.getElementById("updatesTypeFilter");
 
-  function applyFilters() {
-    const searchValue = searchInput.value.toLowerCase();
-    const sectorValue = sectorFilter.value;
-    const typeValue = typeFilter.value;
+  function apply() {
+    const searchVal = search.value.toLowerCase();
 
     filteredUpdates = allUpdates.filter(item => {
-      const matchesSearch =
-        item.title?.toLowerCase().includes(searchValue) ||
-        item.provider?.toLowerCase().includes(searchValue);
-
-      const matchesSector =
-        sectorValue === "all" || item.sector === sectorValue;
-
-      const matchesType =
-        typeValue === "all" || item.type === typeValue;
-
-      return matchesSearch && matchesSector && matchesType;
+      return (
+        (item.title?.toLowerCase().includes(searchVal) ||
+          item.provider?.toLowerCase().includes(searchVal)) &&
+        (sector.value === "all" || item.sector === sector.value) &&
+        (type.value === "all" || item.type === type.value)
+      );
     });
 
     currentPage = 1;
     renderUpdates();
   }
 
-  searchInput.addEventListener("input", applyFilters);
-  sectorFilter.addEventListener("change", applyFilters);
-  typeFilter.addEventListener("change", applyFilters);
+  search.addEventListener("input", apply);
+  sector.addEventListener("change", apply);
+  type.addEventListener("change", apply);
 }

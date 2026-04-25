@@ -1,11 +1,11 @@
 // ===============================
-// INDEX.JS (Homepage Logic)
+// INDEX.JS (CLEAN)
 // ===============================
 
 document.addEventListener("DOMContentLoaded", async () => {
-  loadFeaturedArticles();
-  loadUpdatesPreview();
-  loadStats();
+  await loadFeaturedArticles();
+  await loadUpdatesPreview();
+  await loadStats();
 });
 
 
@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 // -------------------------------
 async function loadFeaturedArticles() {
   const container = document.getElementById("featuredArticlesGrid");
-
   if (!container) return;
 
   const articles = await getFeaturedArticles(3);
@@ -43,16 +42,14 @@ async function loadFeaturedArticles() {
 
 
 // -------------------------------
-// UPDATES PREVIEW (2 items)
+// UPDATES PREVIEW (ONLY 3 ITEMS)
 // -------------------------------
 async function loadUpdatesPreview() {
   const container = document.getElementById("updatesPreviewGrid");
-
   if (!container) return;
 
   const updates = await getUpdates();
-
-  const latest = updates.slice(0, 2);
+  const latest = updates.slice(0, 3);
 
   container.innerHTML = "";
 
@@ -62,14 +59,18 @@ async function loadUpdatesPreview() {
 
     card.innerHTML = `
       <div class="update-header">
-        <span class="badge ${item.access === 'free' ? 'badge-free' : 'badge-paid'}">
-          ${item.access || ''}
+        <span class="badge ${
+          item.access?.toLowerCase().includes("free")
+            ? "badge-free"
+            : "badge-paid"
+        }">
+          ${item.access || "Info"}
         </span>
-        <span class="update-category">${item.sector || ''}</span>
+        <span class="update-category">${item.sector || "General"}</span>
       </div>
 
       <h3>${item.title}</h3>
-      <p class="update-provider">${item.provider || ''}</p>
+      <p class="update-provider">${item.provider || ""}</p>
 
       <a href="${item.link}" target="_blank" class="card-link">
         View →
@@ -86,28 +87,21 @@ async function loadUpdatesPreview() {
 // -------------------------------
 async function loadStats() {
   const stats = await getStats();
-
   if (!stats) return;
 
-  const visitorEl = document.getElementById("visitorCount");
-  const downloadEl = document.getElementById("downloadCount");
-  const topResourceEl = document.getElementById("topResource");
-
-  if (visitorEl) visitorEl.textContent = `${stats.visitors || 0}+`;
-  if (downloadEl) downloadEl.textContent = `${stats.downloads || 0}+`;
-  if (topResourceEl) topResourceEl.textContent = stats.top_resource || "N/A";
+  document.getElementById("visitorCount").textContent = `${stats.visitors || 0}+`;
+  document.getElementById("downloadCount").textContent = `${stats.downloads || 0}+`;
+  document.getElementById("topResource").textContent = stats.top_resource || "N/A";
 }
 
 
 // -------------------------------
-// DATE FORMATTER
+// DATE FORMAT
 // -------------------------------
 function formatDate(dateString) {
   if (!dateString) return "";
 
-  const date = new Date(dateString);
-
-  return date.toLocaleDateString(undefined, {
+  return new Date(dateString).toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",
     day: "numeric"
