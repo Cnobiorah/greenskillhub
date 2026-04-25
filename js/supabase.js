@@ -37,9 +37,7 @@ async function getArticles() {
 }
 
 async function getUpdates() {
-  return fetchTable("updates", {
-    orderBy: { column: "created_at", ascending: false }
-  });
+  return fetchTable("updates");
 }
 
 async function getFeaturedArticles(limit = 3) {
