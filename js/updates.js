@@ -32,7 +32,7 @@ function renderUpdates() {
 
   // Pagination logic
   const start = (currentPage - 1) * itemsPerPage;
-  const paginatedItems = filteredUpdates.slice(start, start + itemsPerPage);
+  const paginatedItems = filteredUpdates;tart, start + itemsPerPage;
 
   if (paginatedItems.length === 0) {
     grid.innerHTML = `<p class="no-results">No updates found.</p>`;
@@ -46,7 +46,7 @@ function renderUpdates() {
 
     card.innerHTML = `
       <div class="update-header">
-        <span class="badge ${item.access === 'free' ? 'badge-free' : 'badge-paid'}">
+        <span class="badge ${item.access?.toLowerCase().includes('free') ? 'badge-free' : 'badge-paid'}
           ${item.access || 'info'}
         </span>
         <span class="update-category">${item.sector || ''}</span>
@@ -57,8 +57,10 @@ function renderUpdates() {
       <p class="update-provider">${item.provider || ''}</p>
 
       <ul class="update-meta-list">
-        <li>Type: ${item.type || ''}</li>
-        <li>Level: ${item.level || ''}</li>
+        <li>Type: ${item.type || 'Course'}</li>
+<li>Level: ${item.level || 'All Levels'}</li>
+<li>Duration: ${item.duration || 'Flexible'}</li>
+<li>Format: ${item.format || 'Online'}</li>
       </ul>
 
       <a href="${item.link}" target="_blank" class="card-link">
