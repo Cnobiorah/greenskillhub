@@ -123,10 +123,16 @@ function setupFilters() {
       provider.includes(searchVal);
 
     const matchesSector =
-      sectorVal === "all" || itemSector.includes(sectorVal);
+  sectorVal === "all" ||
+  itemSector === sectorVal ||
+  itemSector.includes(sectorVal) ||
+  sectorVal.includes(itemSector);
 
     const matchesType =
-      typeVal === "all" || itemType.includes(typeVal);
+  typeVal === "all" ||
+  itemType === typeVal ||
+  itemType.includes(typeVal) ||
+  typeVal.includes(itemType);
 
     return matchesSearch && matchesSector && matchesType;
   });
