@@ -108,20 +108,32 @@ function setupFilters() {
   const type = document.getElementById("updatesTypeFilter");
 
   function apply() {
-    const searchVal = search.value.toLowerCase();
+  const searchVal = search.value.toLowerCase();
+  const sectorVal = sector.value.toLowerCase();
+  const typeVal = type.value.toLowerCase();
 
-    filteredUpdates = allUpdates.filter(item => {
-      return (
-        (item.title?.toLowerCase().includes(searchVal) ||
-          item.provider?.toLowerCase().includes(searchVal)) &&
-        (sector.value === "all" || item.sector === sector.value) &&
-        (type.value === "all" || item.type === type.value)
-      );
-    });
+  filteredUpdates = allUpdates.filter(item => {
+    const title = item.title?.toLowerCase() || "";
+    const provider = item.provider?.toLowerCase() || "";
+    const itemSector = item.sector?.toLowerCase() || "";
+    const itemType = item.type?.toLowerCase() || "";
 
-    updatesCurrentPage = 1;
-    renderUpdates();
-  }
+    const matchesSearch =
+      title.includes(searchVal) ||
+      provider.includes(searchVal);
+
+    const matchesSector =
+      sectorVal === "all" || itemSector.includes(sectorVal);
+
+    const matchesType =
+      typeVal === "all" || itemType.includes(typeVal);
+
+    return matchesSearch && matchesSector && matchesType;
+  });
+
+  updatesCurrentPage = 1;
+  renderUpdates();
+}
 
   search.addEventListener("input", apply);
   sector.addEventListener("change", apply);
