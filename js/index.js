@@ -1,5 +1,5 @@
 // ===============================
-// INDEX.JS (CLEAN)
+// INDEX.JS (FINAL FIXED)
 // ===============================
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -20,37 +20,29 @@ async function loadFeaturedArticles() {
 
   container.innerHTML = "";
 
+  if (!articles || articles.length === 0) {
+    container.innerHTML = `<p>No articles available.</p>`;
+    return;
+  }
+
   articles.forEach(article => {
     const card = document.createElement("div");
     card.className = "card article-card";
 
+    // ⚠️ ARTICLES TABLE DOES NOT HAVE access, sector, etc
+    // So we use correct fields
+
     card.innerHTML = `
-  <div class="update-header">
-    <span class="badge ${
-      item.access?.toLowerCase().includes("free")
-        ? "badge-free"
-        : "badge-paid"
-    }">
-      ${item.access || "Info"}
-    </span>
-    <span class="update-category">${item.sector || "General"}</span>
-  </div>
+      <h3>${article.title}</h3>
 
-  <h3>${item.title}</h3>
+      <p>${article.content || ""}</p>
 
-  <p class="update-provider">${item.provider || "Unknown Provider"}</p>
-
-  <ul class="update-meta-list">
-    <li>Type: ${item.type || "-"}</li>
-    <li>Level: ${item.level || "-"}</li>
-    <li>Duration: ${item.duration || "-"}</li>
-    <li>Format: ${item.format || "-"}</li>
-  </ul>
-
-  <a href="${item.link}" target="_blank" class="card-link">
-    View →
-  </a>
-`;
+      ${
+        article.link
+          ? `<a href="${article.link}" target="_blank" class="card-link">Read more →</a>`
+          : `<span class="card-link">Coming soon</span>`
+      }
+    `;
 
     container.appendChild(card);
   });
@@ -82,13 +74,26 @@ async function loadUpdatesPreview() {
         }">
           ${item.access || "Info"}
         </span>
-        <span class="update-category">${item.sector || "General"}</span>
+
+        <span class="update-category">
+          ${item.sector || "General"}
+        </span>
       </div>
 
       <h3>${item.title}</h3>
-      <p class="update-provider">${item.provider || ""}</p>
 
-      <a href="${item.link}" target="_blank" class="card-link">
+      <p class="update-provider">
+        ${item.provider || "Unknown Provider"}
+      </p>
+
+      <ul class="update-meta-list">
+        <li><strong>Type:</strong> ${item.type || "-"}</li>
+        <li><strong>Level:</strong> ${item.level || "-"}</li>
+        <li><strong>Duration:</strong> ${item.duration || "-"}</li>
+        <li><strong>Format:</strong> ${item.format || "-"}</li>
+      </ul>
+
+      <a href="${item.link || "#"}" target="_blank" class="card-link">
         View →
       </a>
     `;

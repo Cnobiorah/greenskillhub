@@ -1,10 +1,10 @@
 // ===============================
-// ARTICLES.JS
+// ARTICLES.JS (FINAL CLEAN VERSION)
 // ===============================
 
 let allArticles = [];
 let filteredArticles = [];
-let currentPage = 1;
+let articlesCurrentPage = 1;
 const itemsPerPage = 6;
 
 
@@ -12,12 +12,15 @@ const itemsPerPage = 6;
 // INIT
 // -------------------------------
 document.addEventListener("DOMContentLoaded", async () => {
-  allArticles = await getArticles();
+  try {
+    allArticles = await getArticles();
+    filteredArticles = [...allArticles];
 
-  filteredArticles = [...allArticles];
-
-  setupFilters();
-  renderArticles();
+    setupFilters();
+    renderArticles();
+  } catch (err) {
+    console.error("Error loading articles:", err);
+  }
 });
 
 
@@ -28,14 +31,16 @@ function renderArticles() {
   const grid = document.getElementById("articlesGrid");
   const pagination = document.getElementById("articlesPagination");
 
+  if (!grid) return;
+
   grid.innerHTML = "";
 
-  const start = (currentPage - 1) * itemsPerPage;
+  const start = (articlesCurrentPage - 1) * itemsPerPage;
   const paginated = filteredArticles.slice(start, start + itemsPerPage);
 
-  if (paginated.length === 0) {
+  if (!paginated.length) {
     grid.innerHTML = `<p class="no-results">No articles found.</p>`;
-    pagination.innerHTML = "";
+    if (pagination) pagination.innerHTML = "";
     return;
   }
 
@@ -46,7 +51,7 @@ function renderArticles() {
     card.innerHTML = `
       <span class="card-tag">${article.category || "Publication"}</span>
 
-      <h3>${article.title}</h3>
+      <h3>${article.title || "Untitled"}</h3>
 
       <p>${article.summary || ""}</p>
 
@@ -74,26 +79,36 @@ function renderArticles() {
 // -------------------------------
 function renderPagination() {
   const pagination = document.getElementById("articlesPagination");
+  if (!pagination) return;
 
   const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
 
+  if (totalPages <= 1) {
+    pagination.innerHTML = "";
+    return;
+  }
+
   pagination.innerHTML = `
     <div class="pagination-inner">
-      <button class="btn-page" ${currentPage === 1 ? "disabled" : ""} id="prevBtn">Prev</button>
-      <span class="pagination-info">Page ${currentPage} of ${totalPages}</span>
-      <button class="btn-page" ${currentPage === totalPages ? "disabled" : ""} id="nextBtn">Next</button>
+      <button ${articlesCurrentPage === 1 ? "disabled" : ""} id="prevBtn">Prev</button>
+      <span>Page ${articlesCurrentPage} of ${totalPages}</span>
+      <button ${articlesCurrentPage === totalPages ? "disabled" : ""} id="nextBtn">Next</button>
     </div>
   `;
 
-  document.getElementById("prevBtn")?.addEventListener("click", () => {
-    currentPage--;
-    renderArticles();
-  });
+  document.getElementById("prevBtn").onclick = () => {
+    if (articlesCurrentPage > 1) {
+      articlesCurrentPage--;
+      renderArticles();
+    }
+  };
 
-  document.getElementById("nextBtn")?.addEventListener("click", () => {
-    currentPage++;
-    renderArticles();
-  });
+  document.getElementById("nextBtn").onclick = () => {
+    if (articlesCurrentPage < totalPages) {
+      articlesCurrentPage++;
+      renderArticles();
+    }
+  };
 }
 
 
@@ -104,25 +119,31 @@ function setupFilters() {
   const searchInput = document.getElementById("articlesSearch");
   const filterButtons = document.querySelectorAll(".pill-filter");
 
+  if (!searchInput) return;
+
   function applyFilters() {
-    const searchValue = searchInput.value.toLowerCase();
+    const searchValue = searchInput.value.toLowerCase().trim();
 
     const activeFilter =
       document.querySelector(".pill-filter.active")?.dataset.filter || "all";
 
     filteredArticles = allArticles.filter(article => {
+      const title = (article.title || "").toLowerCase();
+      const summary = (article.summary || "").toLowerCase();
+      const category = (article.category || "").toLowerCase();
+
       const matchesSearch =
-        article.title?.toLowerCase().includes(searchValue) ||
-        article.summary?.toLowerCase().includes(searchValue);
+        title.includes(searchValue) ||
+        summary.includes(searchValue);
 
       const matchesFilter =
         activeFilter === "all" ||
-        article.category === activeFilter;
+        category === activeFilter.toLowerCase();
 
       return matchesSearch && matchesFilter;
     });
 
-    currentPage = 1;
+    articlesCurrentPage = 1;
     renderArticles();
   }
 
