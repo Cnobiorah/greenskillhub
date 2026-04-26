@@ -25,16 +25,32 @@ async function loadFeaturedArticles() {
     card.className = "card article-card";
 
     card.innerHTML = `
-      <span class="card-tag">${article.category || "Article"}</span>
-      <h3>${article.title}</h3>
-      <p>${article.summary || ""}</p>
-      <div class="card-meta">
-        <span>${formatDate(article.created_at)}</span>
-      </div>
-      <a href="${article.link}" target="_blank" class="card-link">
-        Read more →
-      </a>
-    `;
+  <div class="update-header">
+    <span class="badge ${
+      item.access?.toLowerCase().includes("free")
+        ? "badge-free"
+        : "badge-paid"
+    }">
+      ${item.access || "Info"}
+    </span>
+    <span class="update-category">${item.sector || "General"}</span>
+  </div>
+
+  <h3>${item.title}</h3>
+
+  <p class="update-provider">${item.provider || "Unknown Provider"}</p>
+
+  <ul class="update-meta-list">
+    <li>Type: ${item.type || "-"}</li>
+    <li>Level: ${item.level || "-"}</li>
+    <li>Duration: ${item.duration || "-"}</li>
+    <li>Format: ${item.format || "-"}</li>
+  </ul>
+
+  <a href="${item.link}" target="_blank" class="card-link">
+    View →
+  </a>
+`;
 
     container.appendChild(card);
   });

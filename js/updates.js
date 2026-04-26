@@ -1,36 +1,30 @@
 // ===============================
-// UPDATES.JS (FINAL CLEAN)
+// UPDATES.JS (FIXED)
 // ===============================
 
 let allUpdates = [];
 let filteredUpdates = [];
-let currentPage = 1;
+let updatesCurrentPage = 1;
 const itemsPerPage = 6;
 
 
-// -------------------------------
 // INIT
-// -------------------------------
 document.addEventListener("DOMContentLoaded", async () => {
   allUpdates = await getUpdates();
-
   filteredUpdates = [...allUpdates];
-
   setupFilters();
   renderUpdates();
 });
 
 
-// -------------------------------
 // RENDER
-// -------------------------------
 function renderUpdates() {
   const grid = document.getElementById("updatesGrid");
   const pagination = document.getElementById("updatesPagination");
 
   grid.innerHTML = "";
 
-  const start = (currentPage - 1) * itemsPerPage;
+  const start = (updatesCurrentPage - 1) * itemsPerPage;
   const items = filteredUpdates.slice(start, start + itemsPerPage);
 
   if (!items.length) {
@@ -78,9 +72,7 @@ function renderUpdates() {
 }
 
 
-// -------------------------------
 // PAGINATION
-// -------------------------------
 function renderPagination() {
   const pagination = document.getElementById("updatesPagination");
 
@@ -92,26 +84,24 @@ function renderPagination() {
   }
 
   pagination.innerHTML = `
-    <button ${currentPage === 1 ? "disabled" : ""} id="prevBtn">Prev</button>
-    <span>Page ${currentPage} of ${totalPages}</span>
-    <button ${currentPage === totalPages ? "disabled" : ""} id="nextBtn">Next</button>
+    <button ${updatesCurrentPage === 1 ? "disabled" : ""} id="prevBtn">Prev</button>
+    <span>Page ${updatesCurrentPage} of ${totalPages}</span>
+    <button ${updatesCurrentPage === totalPages ? "disabled" : ""} id="nextBtn">Next</button>
   `;
 
   document.getElementById("prevBtn").onclick = () => {
-    currentPage--;
+    updatesCurrentPage--;
     renderUpdates();
   };
 
   document.getElementById("nextBtn").onclick = () => {
-    currentPage++;
+    updatesCurrentPage++;
     renderUpdates();
   };
 }
 
 
-// -------------------------------
 // FILTERS
-// -------------------------------
 function setupFilters() {
   const search = document.getElementById("updatesSearch");
   const sector = document.getElementById("updatesSectorFilter");
@@ -129,7 +119,7 @@ function setupFilters() {
       );
     });
 
-    currentPage = 1;
+    updatesCurrentPage = 1;
     renderUpdates();
   }
 
