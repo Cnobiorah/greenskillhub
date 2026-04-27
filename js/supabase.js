@@ -1,9 +1,9 @@
 // ===============================
-// SUPABASE.JS (CLEAN)
+// SUPABASE.JS (FINAL CLEAN)
 // ===============================
 
 const SUPABASE_URL = "https://snokfmygrgittxvwnumv.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNub2tmbXlncmdpdHR4dndudW12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMjUwMTIsImV4cCI6MjA5MjYwMTAxMn0.iCE3WVio6qGD1G6PT6hPOFFcAS0D5J3kQPB7feky92Q";
+const SUPABASE_KEY = "YOUR_ANON_KEY_HERE";
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -46,7 +46,7 @@ async function getFeaturedArticles(limit = 3) {
 
 
 // -------------------------------
-// UPDATES (FULL DATA — NO LIMIT)
+// UPDATES
 // -------------------------------
 async function getUpdates() {
   const { data, error } = await supabaseClient
@@ -56,6 +56,25 @@ async function getUpdates() {
 
   if (error) {
     console.error("Updates error:", error);
+    return [];
+  }
+
+  return data;
+}
+
+
+// -------------------------------
+// TOP RESOURCES (HOMEPAGE)
+// -------------------------------
+async function getTopResources(limit = 3) {
+  const { data, error } = await supabaseClient
+    .from("resources")
+    .select("*")
+    .order("downloads", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Resources error:", error);
     return [];
   }
 
@@ -82,14 +101,22 @@ async function getStats() {
 
 
 // -------------------------------
-// ACTIONS
+// DOWNLOAD TRACKING (NEW SYSTEM)
 // -------------------------------
-async function incrementResource(resourceKey) {
-  await supabaseClient.rpc("increment_download", {
-    resource_key: resourceKey
+async function incrementResourceDownload(resourceId) {
+  const { error } = await supabaseClient.rpc("increment_resource_download", {
+    resource_id: resourceId
   });
+
+  if (error) {
+    console.error("Download increment error:", error);
+  }
 }
 
+
+// -------------------------------
+// VISITORS
+// -------------------------------
 async function incrementVisitors() {
   await supabaseClient.rpc("increment_visitors");
 }
@@ -101,6 +128,7 @@ async function incrementVisitors() {
 window.getArticles = getArticles;
 window.getFeaturedArticles = getFeaturedArticles;
 window.getUpdates = getUpdates;
+window.getTopResources = getTopResources;
 window.getStats = getStats;
-window.incrementResource = incrementResource;
+window.incrementResourceDownload = incrementResourceDownload;
 window.incrementVisitors = incrementVisitors;
