@@ -1,11 +1,11 @@
 // ===============================
-// INDEX.JS (FINAL COMPLETE)
+// INDEX.JS (FINAL WORKING)
 // ===============================
 
 document.addEventListener("DOMContentLoaded", async () => {
   await loadFeaturedArticles();
   await loadUpdatesPreview();
-  await loadTopResources(); // ✅ ADDED
+  await loadTopResources();
   await loadStats();
 });
 
@@ -32,7 +32,6 @@ async function loadFeaturedArticles() {
 
     card.innerHTML = `
       <h3>${article.title}</h3>
-
       <p>${article.content || ""}</p>
 
       ${
@@ -102,7 +101,7 @@ async function loadUpdatesPreview() {
 
 
 // -------------------------------
-// TOP RESOURCES (NEW)
+// TOP RESOURCES
 // -------------------------------
 async function loadTopResources() {
   const container = document.getElementById("topResourcesGrid");
@@ -130,7 +129,7 @@ async function loadTopResources() {
         ${item.downloads || 0} downloads
       </p>
 
-      <a href="${item.file_url || "#"}"
+      <a href="#"
          class="card-link"
          onclick="return handleDownload('${item.id}', '${item.file_url}')">
         Download →
@@ -139,6 +138,23 @@ async function loadTopResources() {
 
     container.appendChild(card);
   });
+}
+
+
+// -------------------------------
+// HANDLE DOWNLOAD (🔥 FIX)
+// -------------------------------
+async function handleDownload(resourceId, fileUrl) {
+  try {
+    await incrementResourceDownload(resourceId);
+    await incrementTotalDownloads();
+
+    window.open(fileUrl, "_blank");
+  } catch (err) {
+    console.error("Download failed:", err);
+  }
+
+  return false;
 }
 
 

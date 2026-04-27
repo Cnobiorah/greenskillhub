@@ -5,7 +5,7 @@
 let allUpdates = [];
 let filteredUpdates = [];
 let updatesCurrentPage = 1;
-const itemsPerPage = 6;
+const updatesItemsPerPage = 6;
 
 
 // INIT
@@ -24,8 +24,8 @@ function renderUpdates() {
 
   grid.innerHTML = "";
 
-  const start = (updatesCurrentPage - 1) * itemsPerPage;
-  const items = filteredUpdates.slice(start, start + itemsPerPage);
+  const start = (updatesCurrentPage - 1) * updatesItemsPerPage;
+  const items = filteredUpdates.slice(start, start + updatesItemsPerPage);
 
   if (!items.length) {
     grid.innerHTML = `<p>No updates found.</p>`;
@@ -76,7 +76,7 @@ function renderUpdates() {
 function renderPagination() {
   const pagination = document.getElementById("updatesPagination");
 
-  const totalPages = Math.ceil(filteredUpdates.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredUpdates.length / updatesItemsPerPage);
 
   if (totalPages <= 1) {
     pagination.innerHTML = "";
