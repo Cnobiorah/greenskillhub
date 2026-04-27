@@ -263,70 +263,7 @@
       <a href="resources.html" class="link-inline">View all resources →</a>
     </div>
 
-    <div class="container cards-grid cards-grid-3">
-      <article class="card resource-card">
-        <div class="resource-icon">📗</div>
-        <h3>Green Skills Starter Guide</h3>
-        <p>
-          A high-level introduction to green skills, key sectors, and pathways for students,
-          career switchers, and professionals around the world.
-        </p>
-        <ul class="resource-meta-list">
-          <li>Format: PDF</li>
-          <li>Length: 30+ pages</li>
-        </ul>
-        <a href="files/green-skills-starter-guide.pdf"
-   class="btn btn-sm btn-secondary"
-   onclick="incrementResource('starter_guide'); gtag('event','download',{
-     'event_category':'resource',
-     'event_label':'starter_guide'
-   })">
-   Download
-</a>
-      </article>
-
-      <article class="card resource-card">
-        <div class="resource-icon">🧭</div>
-        <h3>Sustainability Career Roadmap Template</h3>
-        <p>
-          A step-by-step roadmap template to help you plan your transition into a green or
-          sustainability-focused career.
-        </p>
-        <ul class="resource-meta-list">
-          <li>Format: PDF + Editable</li>
-          <li>Use: Self or mentoring</li>
-        </ul>
-        <a href="files/sustainability-career-roadmap-template.pdf"
-   class="btn btn-sm btn-secondary"
-   onclick="incrementResource('career_template'); gtag('event','download',{
-     'event_category':'resource',
-     'event_label':'career_roadmap'
-   })">
-   Download
-</a>
-      </article>
-
-      <article class="card resource-card">
-        <div class="resource-icon">📊</div>
-        <h3>Green Skills Course Tracker</h3>
-        <p>
-          A simple tracker to record courses taken, certifications completed, and skills
-          you are building over time.
-        </p>
-        <ul class="resource-meta-list">
-          <li>Format: Spreadsheet / PDF</li>
-          <li>Use: Personal learning log</li>
-        </ul>
-        <a href="files/green-skills-course-tracker.xlsx"
-   class="btn btn-sm btn-secondary"
-   onclick="incrementResource('course_tracker'); gtag('event','download',{
-     'event_category':'resource',
-     'event_label':'course_tracker'
-   })">
-   Download
-</a>
-      </article>
-    </div>
+    <div class="container cards-grid cards-grid-3" id="topResourcesGrid"></div>
   </section>
 
   <!-- ================= ABOUT ================= -->

@@ -1,10 +1,11 @@
 // ===============================
-// INDEX.JS (FINAL FIXED)
+// INDEX.JS (FINAL COMPLETE)
 // ===============================
 
 document.addEventListener("DOMContentLoaded", async () => {
   await loadFeaturedArticles();
   await loadUpdatesPreview();
+  await loadTopResources(); // ✅ ADDED
   await loadStats();
 });
 
@@ -29,9 +30,6 @@ async function loadFeaturedArticles() {
     const card = document.createElement("div");
     card.className = "card article-card";
 
-    // ⚠️ ARTICLES TABLE DOES NOT HAVE access, sector, etc
-    // So we use correct fields
-
     card.innerHTML = `
       <h3>${article.title}</h3>
 
@@ -50,7 +48,7 @@ async function loadFeaturedArticles() {
 
 
 // -------------------------------
-// UPDATES PREVIEW (ONLY 3 ITEMS)
+// UPDATES PREVIEW
 // -------------------------------
 async function loadUpdatesPreview() {
   const container = document.getElementById("updatesPreviewGrid");
@@ -95,6 +93,47 @@ async function loadUpdatesPreview() {
 
       <a href="${item.link || "#"}" target="_blank" class="card-link">
         View →
+      </a>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+
+// -------------------------------
+// TOP RESOURCES (NEW)
+// -------------------------------
+async function loadTopResources() {
+  const container = document.getElementById("topResourcesGrid");
+  if (!container) return;
+
+  const resources = await getTopResources(3);
+
+  container.innerHTML = "";
+
+  if (!resources || resources.length === 0) {
+    container.innerHTML = `<p>No resources yet.</p>`;
+    return;
+  }
+
+  resources.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "card resource-card";
+
+    card.innerHTML = `
+      <h3>${item.title}</h3>
+
+      <p>${item.description || ""}</p>
+
+      <p class="text-muted">
+        ${item.downloads || 0} downloads
+      </p>
+
+      <a href="${item.file_url || "#"}"
+         class="card-link"
+         onclick="return handleDownload('${item.id}', '${item.file_url}')">
+        Download →
       </a>
     `;
 

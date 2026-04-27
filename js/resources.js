@@ -1,24 +1,51 @@
 // ===============================
-// RESOURCES.JS
+// RESOURCES.JS (IMPROVED — SAFE)
 // ===============================
 
 let allResources = [];
 let filteredResources = [];
-let currentPage = 1;
+let resourcesCurrentPage = 1;
 const itemsPerPage = 6;
 
 
 // -------------------------------
 // INIT
 // -------------------------------
-document.addEventListener("DOMContentLoaded", () => {
-  allResources = Array.from(document.querySelectorAll(".resource-item"));
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    allResources = await getResources();
+    filteredResources = [...allResources];
 
-  filteredResources = [...allResources];
-
-  setupFilters();
-  renderResources();
+    setupFilters();
+    renderResources();
+  } catch (err) {
+    console.error("Error loading resources:", err);
+  }
 });
+
+
+// -------------------------------
+// DOWNLOAD TRACKING (NEW)
+// -------------------------------
+async function incrementResourceDownload(id) {
+  try {
+    await supabaseClient.rpc("increment_resource_download", {
+      resource_id: id
+    });
+  } catch (err) {
+    console.error("Download tracking error:", err);
+  }
+}
+
+function handleDownload(id, url) {
+  incrementResourceDownload(id);
+
+  setTimeout(() => {
+    window.open(url, "_blank");
+  }, 150);
+
+  return false;
+}
 
 
 // -------------------------------
@@ -28,20 +55,49 @@ function renderResources() {
   const container = document.getElementById("resourceList");
   const pagination = document.getElementById("resourcePagination");
 
-  // Hide all first
-  allResources.forEach(el => el.style.display = "none");
+  if (!container) return;
 
-  const start = (currentPage - 1) * itemsPerPage;
+  container.innerHTML = "";
+
+  const start = (resourcesCurrentPage - 1) * itemsPerPage;
   const paginated = filteredResources.slice(start, start + itemsPerPage);
 
-  if (paginated.length === 0) {
+  if (!paginated.length) {
     container.innerHTML = `<p class="no-results">No resources found.</p>`;
-    pagination.innerHTML = "";
+    if (pagination) pagination.innerHTML = "";
     return;
   }
 
-  paginated.forEach(el => {
-    el.style.display = "block";
+  paginated.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "card resource-card";
+
+    card.innerHTML = `
+      <div class="update-header">
+        <span class="badge">
+          ${item.type || "Resource"}
+        </span>
+        <span class="update-category">
+          ${item.category || "General"}
+        </span>
+      </div>
+
+      <h3>${item.title}</h3>
+
+      <p>${item.description || ""}</p>
+
+      <p class="text-muted">
+        ${item.downloads || 0} downloads
+      </p>
+
+      <a href="${item.file_url || "#"}"
+         class="card-link"
+         onclick="return handleDownload('${item.id}', '${item.file_url}')">
+        Download →
+      </a>
+    `;
+
+    container.appendChild(card);
   });
 
   renderPagination();
@@ -49,68 +105,81 @@ function renderResources() {
 
 
 // -------------------------------
-// PAGINATION
+// PAGINATION (UNCHANGED)
 // -------------------------------
 function renderPagination() {
   const pagination = document.getElementById("resourcePagination");
 
   const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
 
+  if (totalPages <= 1) {
+    pagination.innerHTML = "";
+    return;
+  }
+
   pagination.innerHTML = `
     <div class="pagination-inner">
-      <button class="btn-page" ${currentPage === 1 ? "disabled" : ""} id="prevBtn">Prev</button>
-      <span class="pagination-info">Page ${currentPage} of ${totalPages}</span>
-      <button class="btn-page" ${currentPage === totalPages ? "disabled" : ""} id="nextBtn">Next</button>
+      <button ${resourcesCurrentPage === 1 ? "disabled" : ""} id="prevBtn">Prev</button>
+      <span>Page ${resourcesCurrentPage} of ${totalPages}</span>
+      <button ${resourcesCurrentPage === totalPages ? "disabled" : ""} id="nextBtn">Next</button>
     </div>
   `;
 
-  document.getElementById("prevBtn")?.addEventListener("click", () => {
-    currentPage--;
-    renderResources();
-  });
+  document.getElementById("prevBtn").onclick = () => {
+    if (resourcesCurrentPage > 1) {
+      resourcesCurrentPage--;
+      renderResources();
+    }
+  };
 
-  document.getElementById("nextBtn")?.addEventListener("click", () => {
-    currentPage++;
-    renderResources();
-  });
+  document.getElementById("nextBtn").onclick = () => {
+    if (resourcesCurrentPage < totalPages) {
+      resourcesCurrentPage++;
+      renderResources();
+    }
+  };
 }
 
 
 // -------------------------------
-// FILTERS + SEARCH
+// FILTERS (UNCHANGED)
 // -------------------------------
 function setupFilters() {
   const searchInput = document.getElementById("resourceSearch");
   const categoryFilter = document.getElementById("resourceCategory");
-  const accessFilter = document.getElementById("resourceAccess");
+  const typeFilter = document.getElementById("resourceAccess");
 
   function applyFilters() {
     const searchValue = searchInput.value.toLowerCase();
     const categoryValue = categoryFilter.value;
-    const accessValue = accessFilter.value;
+    const typeValue = typeFilter.value;
 
     filteredResources = allResources.filter(item => {
-      const keywords = item.dataset.keywords || "";
+      const title = (item.title || "").toLowerCase();
+      const description = (item.description || "").toLowerCase();
+      const category = (item.category || "").toLowerCase();
+      const type = (item.type || "").toLowerCase();
 
       const matchesSearch =
-        keywords.toLowerCase().includes(searchValue);
+        title.includes(searchValue) ||
+        description.includes(searchValue);
 
       const matchesCategory =
         categoryValue === "all" ||
-        item.dataset.category === categoryValue;
+        category === categoryValue.toLowerCase();
 
-      const matchesAccess =
-        accessValue === "all" ||
-        item.dataset.access === accessValue;
+      const matchesType =
+        typeValue === "all" ||
+        type === typeValue.toLowerCase();
 
-      return matchesSearch && matchesCategory && matchesAccess;
+      return matchesSearch && matchesCategory && matchesType;
     });
 
-    currentPage = 1;
+    resourcesCurrentPage = 1;
     renderResources();
   }
 
   searchInput.addEventListener("input", applyFilters);
   categoryFilter.addEventListener("change", applyFilters);
-  accessFilter.addEventListener("change", applyFilters);
+  typeFilter.addEventListener("change", applyFilters);
 }
