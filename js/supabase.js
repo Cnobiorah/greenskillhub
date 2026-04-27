@@ -1,5 +1,5 @@
 // ===============================
-// SUPABASE.JS (FINAL CLEAN)
+// SUPABASE.JS (FINAL UPDATED)
 // ===============================
 
 const SUPABASE_URL = "https://snokfmygrgittxvwnumv.supabase.co";
@@ -101,7 +101,7 @@ async function getStats() {
 
 
 // -------------------------------
-// DOWNLOAD TRACKING (NEW SYSTEM)
+// DOWNLOAD TRACKING (PER RESOURCE)
 // -------------------------------
 async function incrementResourceDownload(resourceId) {
   const { error } = await supabaseClient.rpc("increment_resource_download", {
@@ -110,6 +110,18 @@ async function incrementResourceDownload(resourceId) {
 
   if (error) {
     console.error("Download increment error:", error);
+  }
+}
+
+
+// -------------------------------
+// TOTAL DOWNLOADS (STATS)
+// -------------------------------
+async function incrementTotalDownloads() {
+  const { error } = await supabaseClient.rpc("increment_download");
+
+  if (error) {
+    console.error("Stats download error:", error);
   }
 }
 
@@ -131,4 +143,5 @@ window.getUpdates = getUpdates;
 window.getTopResources = getTopResources;
 window.getStats = getStats;
 window.incrementResourceDownload = incrementResourceDownload;
+window.incrementTotalDownloads = incrementTotalDownloads; // ✅ NEW
 window.incrementVisitors = incrementVisitors;

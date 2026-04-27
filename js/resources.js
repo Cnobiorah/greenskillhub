@@ -38,7 +38,9 @@ async function incrementResourceDownload(id) {
 }
 
 function handleDownload(id, url) {
-  incrementResourceDownload(id);
+  incrementResourceDownload(id); // per resource
+
+  incrementTotalDownloads();     // 🔥 ADD THIS
 
   setTimeout(() => {
     window.open(url, "_blank");
