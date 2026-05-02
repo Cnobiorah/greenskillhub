@@ -18,10 +18,38 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     setupFilters();
     renderResources();
+    setupDownloadHandler();
   } catch (err) {
     console.error("Error loading resources:", err);
   }
 });
+
+
+// -------------------------------
+// DOWNLOAD HANDLER — set up once
+// -------------------------------
+function setupDownloadHandler() {
+  const container = document.getElementById("resourceList");
+  if (!container) return;
+
+  container.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".download-btn");
+    if (!btn) return;
+    e.preventDefault();
+
+    const id = btn.dataset.id;
+    const url = btn.dataset.url;
+
+    try {
+      await supabaseClient.rpc("increment_resource_download", { resource_id: id });
+      await supabaseClient.rpc("increment_download");
+    } catch (err) {
+      console.error("Download error:", err);
+    }
+
+    if (url) window.open(url, "_blank");
+  });
+}
 
 
 // -------------------------------
@@ -105,27 +133,11 @@ function renderResources() {
       </a>
     `;
 
-    card.querySelector(".download-btn").addEventListener("click", async (e) => {
-      e.preventDefault();
-      const id = e.target.dataset.id;
-      const url = e.target.dataset.url;
-
-      try {
-        const { error: err1 } = await supabaseClient.rpc("increment_resource_download", {
-          resource_id: id
-        });
-        if (err1) console.error("Resource increment error:", err1);
-
-        const { error: err2 } = await supabaseClient.rpc("increment_download");
-        if (err2) console.error("Total increment error:", err2);
-      } catch (err) {
-        console.error("Download error:", err);
-      }
-
-      if (url) window.open(url, "_blank");
-    });
-
     container.appendChild(card);
+  });
+
+  renderPagination();
+}
   });
 
   renderPagination();
