@@ -12,6 +12,7 @@ const mainNav = document.getElementById("mainNav");
 if (navToggle && mainNav) {
   navToggle.addEventListener("click", () => {
     mainNav.classList.toggle("nav-open");
+    navToggle.setAttribute("aria-expanded", mainNav.classList.contains("nav-open"));
   });
 }
 

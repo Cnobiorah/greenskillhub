@@ -37,15 +37,20 @@ async function incrementResourceDownload(id) {
   }
 }
 
-function handleDownload(id, url) {
-  incrementResourceDownload(id); // per resource
+async function handleDownload(id, url) {
+  try {
+    const { error: err1 } = await supabaseClient.rpc("increment_resource_download", {
+      resource_id: id
+    });
+    if (err1) console.error("Resource increment error:", err1);
 
-  incrementTotalDownloads();     // 🔥 ADD THIS
+    const { error: err2 } = await supabaseClient.rpc("increment_download");
+    if (err2) console.error("Total download increment error:", err2);
+  } catch (err) {
+    console.error("Download tracking error:", err);
+  }
 
-  setTimeout(() => {
-    window.open(url, "_blank");
-  }, 150);
-
+  window.open(url, "_blank");
   return false;
 }
 

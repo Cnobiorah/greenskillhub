@@ -64,6 +64,24 @@ async function getUpdates() {
 
 
 // -------------------------------
+// ALL RESOURCES (RESOURCES PAGE)
+// -------------------------------
+async function getResources() {
+  const { data, error } = await supabaseClient
+    .from("resources")
+    .select("*")
+    .order("downloads", { ascending: false });
+
+  if (error) {
+    console.error("Resources error:", error);
+    return [];
+  }
+
+  return data;
+}
+
+
+// -------------------------------
 // TOP RESOURCES (HOMEPAGE)
 // -------------------------------
 async function getTopResources(limit = 3) {
@@ -140,8 +158,9 @@ async function incrementVisitors() {
 window.getArticles = getArticles;
 window.getFeaturedArticles = getFeaturedArticles;
 window.getUpdates = getUpdates;
+window.getResources = getResources;
 window.getTopResources = getTopResources;
 window.getStats = getStats;
 window.incrementResourceDownload = incrementResourceDownload;
-window.incrementTotalDownloads = incrementTotalDownloads; // ✅ NEW
+window.incrementTotalDownloads = incrementTotalDownloads;
 window.incrementVisitors = incrementVisitors;

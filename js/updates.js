@@ -54,7 +54,7 @@ function renderUpdates() {
       <p class="update-provider">${item.provider || "Unknown Provider"}</p>
 
       <ul class="update-meta-list">
-        <li><strong>Type:</strong> ${item.type || "-"}</li>
+        <li><strong>Type:</strong> ${item.Type || item.type || "-"}</li>
         <li><strong>Level:</strong> ${item.level || "-"}</li>
         <li><strong>Duration:</strong> ${item.duration || "-"}</li>
         <li><strong>Format:</strong> ${item.format || "-"}</li>
@@ -116,7 +116,7 @@ function setupFilters() {
     const title = item.title?.toLowerCase() || "";
     const provider = item.provider?.toLowerCase() || "";
     const itemSector = item.sector?.toLowerCase() || "";
-    const itemType = item.type?.toLowerCase() || "";
+    const itemType = item.Type || item.type?.toLowerCase() || "";
 
     const matchesSearch =
       title.includes(searchVal) ||

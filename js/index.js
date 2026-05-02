@@ -3,6 +3,7 @@
 // ===============================
 
 document.addEventListener("DOMContentLoaded", async () => {
+  await incrementVisitors();
   await loadFeaturedArticles();
   await loadUpdatesPreview();
   await loadTopResources();
@@ -146,14 +147,18 @@ async function loadTopResources() {
 // -------------------------------
 async function handleDownload(resourceId, fileUrl) {
   try {
-    await incrementResourceDownload(resourceId);
-    await incrementTotalDownloads();
+    const { error: err1 } = await supabaseClient.rpc("increment_resource_download", {
+      resource_id: resourceId
+    });
+    if (err1) console.error("Resource increment error:", err1);
 
-    window.open(fileUrl, "_blank");
+    const { error: err2 } = await supabaseClient.rpc("increment_download");
+    if (err2) console.error("Total download increment error:", err2);
   } catch (err) {
     console.error("Download failed:", err);
   }
 
+  window.open(fileUrl, "_blank");
   return false;
 }
 

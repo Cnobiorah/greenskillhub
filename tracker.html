@@ -12,132 +12,192 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap"
     rel="stylesheet"
   />
   <style>
+    /* ── Tracker-specific overrides ── */
+
     .tracker-topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 12px;
       flex-wrap: wrap;
-      margin: 18px 0 8px;
+      margin: 16px 0 8px;
     }
 
     .tracker-results-count {
-      font-size: 0.95rem;
-      opacity: 0.85;
+      font-size: 0.875rem;
+      color: var(--color-faint);
+      font-weight: 500;
     }
 
     .tracker-badges {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin: 10px 0 14px;
+      gap: 6px;
+      margin: 0 0 0.85rem;
     }
 
     .tracker-badge {
       display: inline-flex;
       align-items: center;
-      padding: 6px 10px;
+      padding: 0.22rem 0.7rem;
       border-radius: 999px;
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       font-weight: 600;
-      background: rgba(15, 118, 110, 0.08);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: rgba(46, 204, 130, 0.1);
+      color: var(--forest-mid);
+      border: 1px solid rgba(46, 204, 130, 0.22);
     }
 
     .tracker-card-meta {
-      margin: 10px 0 0;
+      margin: 0.75rem 0 0;
+      font-size: 0.83rem;
+      color: var(--color-muted);
       line-height: 1.7;
+    }
+
+    .tracker-card-meta strong {
+      color: var(--ink-soft);
+      font-weight: 600;
     }
 
     .tracker-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 14px;
+      gap: 0.6rem;
+      margin-top: 1rem;
     }
 
+    /* Detail panel */
     .tracker-detail {
-      margin-top: 32px;
-      border: 1px solid rgba(16, 24, 40, 0.08);
-      border-radius: 20px;
-      padding: 24px;
-      background: #fff;
-      box-shadow: 0 8px 24px rgba(16, 24, 40, 0.05);
+      margin-top: 2.5rem;
+      border: 1px solid var(--color-border-mid);
+      border-radius: var(--r-xl);
+      padding: 2rem;
+      background: var(--surface);
+      box-shadow: var(--shadow-md);
+      position: relative;
     }
 
-    .tracker-detail.hidden {
-      display: none;
+    .tracker-detail::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--forest), var(--leaf));
+      border-radius: var(--r-xl) var(--r-xl) 0 0;
     }
+
+    .tracker-detail.hidden { display: none; }
 
     .tracker-detail-grid {
       display: grid;
       grid-template-columns: 1.3fr 1fr;
-      gap: 24px;
-      margin-top: 18px;
+      gap: 2rem;
+      margin-top: 1.5rem;
     }
 
     .tracker-detail-section h3 {
-      margin-bottom: 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--forest-mid);
+      margin-bottom: 0.6rem;
+      margin-top: 1.25rem;
+    }
+
+    .tracker-detail-section h3:first-child { margin-top: 0; }
+
+    .tracker-detail-section p {
+      font-size: 0.92rem;
+      color: var(--color-muted);
+      line-height: 1.7;
     }
 
     .tracker-detail-list {
-      padding-left: 18px;
+      padding-left: 0;
       margin: 0;
+      list-style: none;
     }
 
     .tracker-detail-list li {
-      margin-bottom: 8px;
+      font-size: 0.88rem;
+      color: var(--color-muted);
+      padding: 0.3rem 0;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .tracker-detail-list li:last-child { border-bottom: none; }
+
+    .tracker-detail-list li::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--leaf);
+      flex-shrink: 0;
+      margin-top: 0.4rem;
     }
 
     .tracker-empty {
       grid-column: 1 / -1;
+      text-align: center;
+      padding: 3rem;
     }
 
+    /* Toolbar layouts */
     .tracker-toolbar-clean {
       display: grid;
       grid-template-columns: 1.3fr 1fr 1fr;
-      gap: 18px;
-      margin-top: 22px;
-      margin-bottom: 18px;
+      gap: 0.85rem;
+      margin-bottom: 0.75rem;
     }
 
     .tracker-toolbar-clean .updates-search,
-    .tracker-toolbar-clean .updates-filter-select {
-      width: 100%;
-    }
+    .tracker-toolbar-clean .updates-filter-select { width: 100%; }
 
     .tracker-toolbar-clean .updates-search input,
-    .tracker-toolbar-clean .updates-dropdown {
-      width: 100%;
-    }
+    .tracker-toolbar-clean .updates-dropdown { width: 100%; }
 
     .tracker-toolbar-secondary {
       display: grid;
-      grid-template-columns: repeat(3, minmax(180px, 1fr)) minmax(200px, 1fr);
-      gap: 18px;
-      margin-bottom: 12px;
+      grid-template-columns: repeat(3, minmax(150px, 1fr)) minmax(180px, 1fr);
+      gap: 0.85rem;
+      margin-bottom: 0.5rem;
     }
 
-    .tracker-toolbar-secondary select {
-      width: 100%;
+    .tracker-toolbar-secondary select { width: 100%; }
+
+    /* JS-injected skill cards — always visible */
+    #skillsGrid .card {
+      animation: none;
+      opacity: 1;
+    }
+
+    /* Dark mode detail panel */
+    .dark-mode .tracker-detail {
+      background: var(--color-surface);
+      border-color: var(--color-border);
     }
 
     @media (max-width: 1100px) {
       .tracker-toolbar-clean,
-      .tracker-toolbar-secondary {
-        grid-template-columns: 1fr 1fr;
-      }
+      .tracker-toolbar-secondary { grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 840px) {
       .tracker-detail-grid,
       .tracker-toolbar-clean,
-      .tracker-toolbar-secondary {
-        grid-template-columns: 1fr;
-      }
+      .tracker-toolbar-secondary { grid-template-columns: 1fr; }
     }
   </style>
   <!-- Google tag (gtag.js) -->
@@ -168,7 +228,7 @@
       </button>
 
       <nav class="main-nav" id="mainNav">
-        <ul>
+        <ul class="nav-list">
           <li><a href="index.html" class="nav-link">Home</a></li>
           <li><a href="articles.html" class="nav-link">Articles</a></li>
           <li><a href="tracker.html" class="nav-link active">Skills Tracker</a></li>
@@ -194,8 +254,9 @@
       </div>
 
       <div class="container updates-layout">
-        <div class="tracker-toolbar-clean">
-          <div class="updates-search">
+        <div class="updates-toolbar" style="flex-direction: column; align-items: stretch; gap: 0.75rem;">
+          <div class="tracker-toolbar-clean">
+            <div class="updates-search">
             <input
               type="text"
               id="skillsSearch"
@@ -262,6 +323,7 @@
             <button type="button" class="btn btn-sm btn-outline" id="resetSkillsBtn">Reset filters</button>
           </div>
         </div>
+        </div><!-- end updates-toolbar -->
 
         <div class="tracker-topbar">
           <p class="tracker-results-count" id="skillsResultsCount">Showing 0 of 0 skills</p>
