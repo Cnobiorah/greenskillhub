@@ -1,5 +1,5 @@
 // ===============================
-// RESOURCES.JS (IMPROVED — SAFE)
+// RESOURCES.JS (FINAL)
 // ===============================
 
 let allResources = [];
@@ -53,37 +53,6 @@ function setupDownloadHandler() {
 
 
 // -------------------------------
-// DOWNLOAD TRACKING (NEW)
-// -------------------------------
-async function incrementResourceDownload(id) {
-  try {
-    await supabaseClient.rpc("increment_resource_download", {
-      resource_id: id
-    });
-  } catch (err) {
-    console.error("Download tracking error:", err);
-  }
-}
-
-async function handleDownload(id, url) {
-  try {
-    const { error: err1 } = await supabaseClient.rpc("increment_resource_download", {
-      resource_id: id
-    });
-    if (err1) console.error("Resource increment error:", err1);
-
-    const { error: err2 } = await supabaseClient.rpc("increment_download");
-    if (err2) console.error("Total download increment error:", err2);
-  } catch (err) {
-    console.error("Download tracking error:", err);
-  }
-
-  window.open(url, "_blank");
-  return false;
-}
-
-
-// -------------------------------
 // RENDER
 // -------------------------------
 function renderResources() {
@@ -106,25 +75,14 @@ function renderResources() {
   paginated.forEach(item => {
     const card = document.createElement("div");
     card.className = "card resource-card";
-
     card.innerHTML = `
       <div class="update-header">
-        <span class="badge">
-          ${item.type || "Resource"}
-        </span>
-        <span class="update-category">
-          ${item.category || "General"}
-        </span>
+        <span class="badge">${item.type || "Resource"}</span>
+        <span class="update-category">${item.category || "General"}</span>
       </div>
-
       <h3>${item.title}</h3>
-
       <p>${item.description || ""}</p>
-
-      <p class="text-muted">
-        ${item.downloads || 0} downloads
-      </p>
-
+      <p class="text-muted">${item.downloads || 0} downloads</p>
       <a href="#"
          class="card-link download-btn"
          data-id="${item.id}"
@@ -132,24 +90,18 @@ function renderResources() {
         Download →
       </a>
     `;
-
     container.appendChild(card);
   });
 
   renderPagination();
 }
-  });
-
-  renderPagination();
-}
 
 
 // -------------------------------
-// PAGINATION (UNCHANGED)
+// PAGINATION
 // -------------------------------
 function renderPagination() {
   const pagination = document.getElementById("resourcePagination");
-
   const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
 
   if (totalPages <= 1) {
@@ -166,23 +118,16 @@ function renderPagination() {
   `;
 
   document.getElementById("prevBtn").onclick = () => {
-    if (resourcesCurrentPage > 1) {
-      resourcesCurrentPage--;
-      renderResources();
-    }
+    if (resourcesCurrentPage > 1) { resourcesCurrentPage--; renderResources(); }
   };
-
   document.getElementById("nextBtn").onclick = () => {
-    if (resourcesCurrentPage < totalPages) {
-      resourcesCurrentPage++;
-      renderResources();
-    }
+    if (resourcesCurrentPage < totalPages) { resourcesCurrentPage++; renderResources(); }
   };
 }
 
 
 // -------------------------------
-// FILTERS (UNCHANGED)
+// FILTERS
 // -------------------------------
 function setupFilters() {
   const searchInput = document.getElementById("resourceSearch");
@@ -200,17 +145,9 @@ function setupFilters() {
       const category = (item.category || "").toLowerCase();
       const type = (item.type || "").toLowerCase();
 
-      const matchesSearch =
-        title.includes(searchValue) ||
-        description.includes(searchValue);
-
-      const matchesCategory =
-        categoryValue === "all" ||
-        category === categoryValue.toLowerCase();
-
-      const matchesType =
-        typeValue === "all" ||
-        type === typeValue.toLowerCase();
+      const matchesSearch = title.includes(searchValue) || description.includes(searchValue);
+      const matchesCategory = categoryValue === "all" || category === categoryValue.toLowerCase();
+      const matchesType = typeValue === "all" || type === typeValue.toLowerCase();
 
       return matchesSearch && matchesCategory && matchesType;
     });

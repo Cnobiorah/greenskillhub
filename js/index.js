@@ -1,5 +1,5 @@
 // ===============================
-// INDEX.JS (FINAL WORKING)
+// INDEX.JS (FINAL)
 // ===============================
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -19,7 +19,6 @@ async function loadFeaturedArticles() {
   if (!container) return;
 
   const articles = await getFeaturedArticles(3);
-
   container.innerHTML = "";
 
   if (!articles || articles.length === 0) {
@@ -30,18 +29,14 @@ async function loadFeaturedArticles() {
   articles.forEach(article => {
     const card = document.createElement("div");
     card.className = "card article-card";
-
     card.innerHTML = `
       <h3>${article.title}</h3>
-      <p>${article.content || ""}</p>
-
-      ${
-        article.link
-          ? `<a href="${article.link}" target="_blank" class="card-link">Read more →</a>`
-          : `<span class="card-link">Coming soon</span>`
+      <p>${article.summary || article.content || ""}</p>
+      ${article.link
+        ? `<a href="${article.link}" target="_blank" class="card-link">Read more →</a>`
+        : `<span class="card-link">Coming soon</span>`
       }
     `;
-
     container.appendChild(card);
   });
 }
@@ -56,46 +51,28 @@ async function loadUpdatesPreview() {
 
   const updates = await getUpdates();
   const latest = updates.slice(0, 3);
-
   container.innerHTML = "";
 
   latest.forEach(item => {
     const card = document.createElement("div");
     card.className = "card update-card";
-
     card.innerHTML = `
       <div class="update-header">
-        <span class="badge ${
-          item.access?.toLowerCase().includes("free")
-            ? "badge-free"
-            : "badge-paid"
-        }">
+        <span class="badge ${item.access?.toLowerCase().includes("free") ? "badge-free" : "badge-paid"}">
           ${item.access || "Info"}
         </span>
-
-        <span class="update-category">
-          ${item.sector || "General"}
-        </span>
+        <span class="update-category">${item.sector || "General"}</span>
       </div>
-
       <h3>${item.title}</h3>
-
-      <p class="update-provider">
-        ${item.provider || "Unknown Provider"}
-      </p>
-
+      <p class="update-provider">${item.provider || "Unknown Provider"}</p>
       <ul class="update-meta-list">
-        <li><strong>Type:</strong> ${item.type || "-"}</li>
+        <li><strong>Type:</strong> ${item.Type || item.type || "-"}</li>
         <li><strong>Level:</strong> ${item.level || "-"}</li>
         <li><strong>Duration:</strong> ${item.duration || "-"}</li>
         <li><strong>Format:</strong> ${item.format || "-"}</li>
       </ul>
-
-      <a href="${item.link || "#"}" target="_blank" class="card-link">
-        View →
-      </a>
+      <a href="${item.link || "#"}" target="_blank" class="card-link">View →</a>
     `;
-
     container.appendChild(card);
   });
 }
@@ -109,7 +86,6 @@ async function loadTopResources() {
   if (!container) return;
 
   const resources = await getTopResources(3);
-
   container.innerHTML = "";
 
   if (!resources || resources.length === 0) {
@@ -120,7 +96,6 @@ async function loadTopResources() {
   resources.forEach(item => {
     const card = document.createElement("div");
     card.className = "card resource-card";
-
     card.innerHTML = `
       <h3>${item.title}</h3>
       <p>${item.description || ""}</p>
@@ -132,11 +107,9 @@ async function loadTopResources() {
         Download →
       </a>
     `;
-
     container.appendChild(card);
   });
 
-  // Single event listener on container
   container.addEventListener("click", async (e) => {
     const btn = e.target.closest(".download-btn");
     if (!btn) return;
@@ -158,27 +131,6 @@ async function loadTopResources() {
 
 
 // -------------------------------
-// HANDLE DOWNLOAD (🔥 FIX)
-// -------------------------------
-async function handleDownload(resourceId, fileUrl) {
-  try {
-    const { error: err1 } = await supabaseClient.rpc("increment_resource_download", {
-      resource_id: resourceId
-    });
-    if (err1) console.error("Resource increment error:", err1);
-
-    const { error: err2 } = await supabaseClient.rpc("increment_download");
-    if (err2) console.error("Total download increment error:", err2);
-  } catch (err) {
-    console.error("Download failed:", err);
-  }
-
-  window.open(fileUrl, "_blank");
-  return false;
-}
-
-
-// -------------------------------
 // STATS
 // -------------------------------
 async function loadStats() {
@@ -196,7 +148,6 @@ async function loadStats() {
 // -------------------------------
 function formatDate(dateString) {
   if (!dateString) return "";
-
   return new Date(dateString).toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",
