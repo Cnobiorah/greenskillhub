@@ -123,21 +123,36 @@ async function loadTopResources() {
 
     card.innerHTML = `
       <h3>${item.title}</h3>
-
       <p>${item.description || ""}</p>
-
-      <p class="text-muted">
-        ${item.downloads || 0} downloads
-      </p>
-
+      <p class="text-muted">${item.downloads || 0} downloads</p>
       <a href="#"
-         class="card-link"
-         onclick="return handleDownload('${item.id}', '${item.file_url}')">
+         class="card-link download-btn"
+         data-id="${item.id}"
+         data-url="${item.file_url || ''}">
         Download →
       </a>
     `;
 
     container.appendChild(card);
+  });
+
+  // Single event listener on container
+  container.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".download-btn");
+    if (!btn) return;
+    e.preventDefault();
+
+    const id = btn.dataset.id;
+    const url = btn.dataset.url;
+
+    try {
+      await supabaseClient.rpc("increment_resource_download", { resource_id: id });
+      await supabaseClient.rpc("increment_download");
+    } catch (err) {
+      console.error("Download error:", err);
+    }
+
+    if (url) window.open(url, "_blank");
   });
 }
 

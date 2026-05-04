@@ -138,6 +138,10 @@ function renderResources() {
 
   renderPagination();
 }
+  });
+
+  renderPagination();
+}
 
 
 // -------------------------------
