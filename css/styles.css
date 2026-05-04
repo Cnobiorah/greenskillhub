@@ -334,7 +334,6 @@ img { max-width: 100%; display: block; }
 .nav-link.active {
   color: var(--forest);
   font-weight: 600;
-  background: rgba(10, 61, 46, 0.08);
 }
 
 /* Nav CTA gap */
@@ -1173,7 +1172,7 @@ img { max-width: 100%; display: block; }
    ========================================================= */
 
 .site-footer {
-  background: var(--ink);
+  background: #141a15 !important;
   color: rgba(255,255,255,0.8);
   padding-top: 4rem;
   padding-bottom: 1.75rem;
@@ -1198,7 +1197,7 @@ img { max-width: 100%; display: block; }
 .footer-brand p {
   font-size: 0.88rem;
   line-height: 1.7;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.55);
   max-width: 260px;
 }
 
